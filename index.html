@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>迷因咖啡館 Meme Cafe</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- html2canvas CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #140F0D; color: #F5EBE1; }
+    .font-pixel { font-family: 'DotGothic16', monospace; }
+    @keyframes shaker { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-15deg); } 75% { transform: rotate(15deg); } }
+    .animate-shaker { animation: shaker 0.35s infinite; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+  <header class="border-b border-[#34241B] bg-[#1A1310] p-4 text-center">
+    <h1 class="font-pixel text-xl font-bold text-[#FDE68A]">迷因咖啡館 Meme Cafe</h1>
+    <p class="text-xs text-[#A89284]">測出你的打工靈魂特調</p>
+  </header>
+
+  <main class="max-w-xl mx-auto p-4 flex-1 w-full flex flex-col justify-center">
+    <!-- PAGE 1: 點餐 -->
+    <div id="page-order" class="space-y-6">
+      <div class="bg-[#1F1714] border-2 border-[#4A3427] rounded-xl p-4 text-center">
+        <h2 class="text-xl font-bold text-[#FFFDF8]">歡迎光臨迷因咖啡館</h2>
+        <p class="text-xs text-[#C8B8A6] mt-1">選個心情與毒舌程度，調出你的專屬迷因咖啡</p>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-sm font-bold font-pixel text-[#FDE68A]">1. 選擇你的當前心情：</label>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="mood-options">
+          <button type="button" onclick="selectMood('anxious')" class="mood-btn p-3 rounded-lg border border-[#4D3628] bg-[#2E1E16] text-left hover:border-[#D97706]" data-mood="anxious">😰 焦慮 (心悸特調)</button>
+          <button type="button" onclick="selectMood('clockout')" class="mood-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-left hover:border-[#D97706]" data-mood="clockout">🏃💨 想下班 (光速逃逸)</button>
+          <button type="button" onclick="selectMood('empty')" class="mood-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-left hover:border-[#D97706]" data-mood="empty">🫠 腦袋空空 (404待機)</button>
+          <button type="button" onclick="selectMood('meltdown')" class="mood-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-left hover:border-[#D97706]" data-mood="meltdown">🌋 崩潰 (原地爆炸)</button>
+          <button type="button" onclick="selectMood('zen')" class="mood-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-left hover:border-[#D97706]" data-mood="zen">🍵 平靜 (佛系化境)</button>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-sm font-bold font-pixel text-[#FDE68A]">2. 選擇毒舌指數 (1-3 星)：</label>
+        <div class="grid grid-cols-3 gap-2" id="roast-options">
+          <button type="button" onclick="selectRoast(1)" class="roast-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-center" data-roast="1">★☆☆<br><span class="text-xs">溫柔微酸</span></button>
+          <button type="button" onclick="selectRoast(2)" class="roast-btn p-3 rounded-lg border border-[#D97706] bg-[#2E1E16] text-center" data-roast="2">★★☆<br><span class="text-xs">濃郁回甘</span></button>
+          <button type="button" onclick="selectRoast(3)" class="roast-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-center" data-roast="3">★★★<br><span class="text-xs">重焙苦烈</span></button>
+        </div>
+      </div>
+
+      <button type="button" onclick="startBrewing()" class="w-full py-4 rounded-xl bg-gradient-to-r from-[#D97706] to-[#B45309] text-white font-pixel font-bold text-lg shadow-lg hover:brightness-110">
+        開始調製 ☕
+      </button>
+    </div>
+
+    <!-- PAGE 2: 加載 -->
+    <div id="page-loading" class="hidden text-center py-12 space-y-6">
+      <div class="text-6xl animate-shaker">☕🫨</div>
+      <div id="loading-msg" class="font-pixel text-xl text-[#FDE68A]">正在研磨打工人的辛酸...</div>
+      <p class="text-xs text-[#A89284]">高速搖杯調配中，2 秒後出杯！</p>
+    </div>
+
+    <!-- PAGE 3: 結果卡片 -->
+    <div id="page-result" class="hidden space-y-4">
+      <div id="card" class="bg-[#1C1513] border-2 border-[#5C3D2E] rounded-2xl p-6 text-left shadow-2xl space-y-4">
+        <div class="flex justify-between border-b border-[#4D3326] pb-2 text-xs font-pixel text-[#D97706]">
+          <span>MEME CAFE #888</span>
+          <span id="card-time">18:00</span>
+        </div>
+        <div>
+          <span id="card-badge" class="text-xs font-pixel px-2 py-0.5 rounded bg-[#3D2517] text-[#F59E0B]">焦慮特調</span>
+          <h3 id="card-name" class="text-2xl font-bold text-white mt-1">心悸美式：今晚不用睡</h3>
+        </div>
+        <div class="h-48 bg-[#251A16] rounded-xl flex items-center justify-center border border-[#4A3427] text-6xl" id="card-emoji">
+          😰
+        </div>
+        <div class="bg-[#261B16] border border-[#52372A] rounded-xl p-4">
+          <p class="text-xs text-[#D97706] font-pixel">迷因金句：</p>
+          <p id="card-quote" class="text-base font-bold text-[#FFF6EB] mt-1">「世界上 90% 的焦慮來自於：還沒發生但你腦補了一百萬遍的事。」</p>
+        </div>
+        <div class="text-xs text-[#8C7A70] font-pixel text-center pt-2 border-t border-[#4D3326]">
+          ★★★ 迷因咖啡館 · 摸魚認證出杯
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="resetOrder()" class="flex-1 py-3 rounded-xl bg-[#261C18] border border-[#4A3427] font-pixel text-sm hover:bg-[#34241E]">再一杯 🔄</button>
+        <button onclick="downloadCard()" class="flex-1 py-3 rounded-xl bg-[#D97706] text-white font-pixel font-bold text-sm hover:bg-[#B45309]">下載卡片 📥</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="p-3 text-center text-xs text-[#63554D] font-pixel">
+    迷因咖啡館 Meme Cafe © 2026
+  </footer>
+
+  <script>
+    let curMood = 'anxious';
+    let curRoast = 2;
+
+    const data = {
+      anxious: {
+        name: '心悸美式：今晚不用睡',
+        emoji: '😰',
+        quotes: {
+          1: '事情總會解決的，如果解決不了，至少明天太陽還是會升起。',
+          2: '世界上 90% 的焦慮來自於：還沒發生但你腦補了一百萬遍的事。',
+          3: '你在焦慮未來的十年，但說實話，連今晚晚餐要吃什麼你都決定不了。'
+        }
+      },
+      clockout: {
+        name: '摸魚特調：光速逃逸拿鐵',
+        emoji: '🏃💨',
+        quotes: {
+          1: '打卡鐘響起那一刻，你就是世界上最自由的人類。',
+          2: '工資只是買你的時間，沒買你的靈魂，時間到了就該原地消散。',
+          3: '只要我下班跑得夠快，貧窮就追不上我——騙你的，貧窮在門口騎機車等你。'
+        }
+      },
+      empty: {
+        name: '404 腦袋未找到·純白歐蕾',
+        emoji: '🫠',
+        quotes: {
+          1: '偶爾給大腦放個空也是一種重開機，不需要隨時都那麼聰明。',
+          2: '聽君一席話，如聽一席話。我點頭不是因為聽懂了，是因為脖子酸。',
+          3: '清空思緒是智者的冥想，而你是純粹的儲存空間不足且忘了充電。'
+        }
+      },
+      meltdown: {
+        name: '原地爆炸·岩漿火山濃縮',
+        emoji: '🌋',
+        quotes: {
+          1: '崩潰一下沒關係的，哭完吼完，我們再把碎片一片片撿起來。',
+          2: '既然大家都是精神病，那你憑什麼要求我今天當個情緒穩定的成年人？',
+          3: '叫得再大聲也沒用，老闆只會問你：「PPT 改好了嗎？改好了發我。」'
+        }
+      },
+      zen: {
+        name: '菩提蓮花·無念手沖瑰夏',
+        emoji: '🍵',
+        quotes: {
+          1: '靜下心來，萬物靜觀皆自得。享受此刻咖啡的香氣。',
+          2: '只要我裝作不在乎，這世界上就沒有任何 KPI 能傷得到我。',
+          3: '平靜？你那叫看破紅塵嗎？你那叫看著戶頭餘額已經徹底認命了。'
+        }
+      }
+    };
+
+    function selectMood(m) {
+      curMood = m;
+      document.querySelectorAll('.mood-btn').forEach(b => {
+        b.className = b.dataset.mood === m ? 'mood-btn p-3 rounded-lg border border-[#D97706] bg-[#2E1E16] text-left' : 'mood-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-left';
+      });
+    }
+
+    function selectRoast(r) {
+      curRoast = r;
+      document.querySelectorAll('.roast-btn').forEach(b => {
+        b.className = parseInt(b.dataset.roast) === r ? 'roast-btn p-3 rounded-lg border border-[#D97706] bg-[#2E1E16] text-center' : 'roast-btn p-3 rounded-lg border border-[#4D3628] bg-[#1E1714] text-center';
+      });
+    }
+
+    function startBrewing() {
+      document.getElementById('page-order').classList.add('hidden');
+      document.getElementById('page-loading').classList.remove('hidden');
+
+      const messages = ['正在研磨打工人的辛酸...', '加入 200ml 摸魚精華...', '搖勻社畜眼淚與加班怨念...', '即將出杯！'];
+      let idx = 0;
+      const interval = setInterval(() => {
+        idx = (idx + 1) % messages.length;
+        document.getElementById('loading-msg').innerText = messages[idx];
+      }, 500);
+
+      setTimeout(() => {
+        clearInterval(interval);
+        document.getElementById('page-loading').classList.add('hidden');
+        document.getElementById('page-result').classList.remove('hidden');
+
+        const item = data[curMood];
+        document.getElementById('card-name').innerText = item.name;
+        document.getElementById('card-emoji').innerText = item.emoji;
+        document.getElementById('card-quote').innerText = '「' + item.quotes[curRoast] + '」';
+        document.getElementById('card-time').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      }, 2000);
+    }
+
+    function resetOrder() {
+      document.getElementById('page-result').classList.add('hidden');
+      document.getElementById('page-order').classList.remove('hidden');
+    }
+
+    function downloadCard() {
+      html2canvas(document.getElementById('card')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'MemeCafe-' + curMood + '.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
